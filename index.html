@@ -4,19 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/281/281769.png" type="image/x-icon">
-    <meta name="google-site-verification" content="C5DLIlVA9VTp9uRUMR7RoB5543R6LTeQENlTBlu1Vtw" />
-    <title>QuickMail | Tu Correo Temporal Gratis</title>
-    
-    <meta name="description" content="Obtén un correo temporal gratis y rápido con QuickMail. Evita el spam y protege tu privacidad.">
-    <meta name="keywords" content="correo temporal, email desechable, temp mail, correos falsos, evitar spam">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://tu-nombre.vercel.app/">
-
+    <title>QuickMail | Correo Temporal con Lectura</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; }
-        .loading { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        .modal-active { overflow: hidden; }
+        .loading { animation: pulse 2s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
     </style>
 </head>
@@ -24,15 +18,15 @@
 <body class="bg-[#0f172a] text-slate-200 min-h-screen flex flex-col items-center p-4 md:p-10">
 
     <header class="mb-10 text-center">
-        <h1 class="text-4xl font-extrabold text-blue-500 mb-2">⚡ Tu correo temporal</h1>
-        <p class="text-slate-400">Tu correo personal desechable. Rápido y sin spam.</p>
+        <h1 class="text-4xl font-extrabold text-blue-500 mb-2">⚡Tu Correo temporal</h1>
+        <p class="text-slate-400">Genera, recibe y lee tus correos al instante.</p>
     </header>
 
     <main class="w-full max-w-2xl bg-[#1e293b] rounded-2xl p-6 md:p-8 shadow-2xl border border-slate-700">
         
         <div class="flex flex-col gap-4 mb-8">
             <div class="flex justify-between items-center">
-                <label class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Tu dirección actual:</label>
+                <label class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Tu dirección:</label>
                 <span id="timer" class="text-xs text-orange-400 font-mono">Expira en: 60:00</span>
             </div>
             
@@ -42,7 +36,7 @@
                 </div>
                 
                 <div class="flex gap-2">
-                    <button onclick="copiarCorreo()" id="btn-copiar" class="bg-slate-700 hover:bg-slate-600 text-white px-5 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2">
+                    <button onclick="copiarCorreo()" class="bg-slate-700 hover:bg-slate-600 text-white px-5 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2">
                         📋 <span>Copiar</span>
                     </button>
                     <button onclick="generarNuevoManual()" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2">
@@ -57,181 +51,4 @@
                 <div class="flex items-center gap-2">
                     <h2 class="text-xl font-bold text-white">Bandeja de Entrada</h2>
                     <button onclick="refrescarManual()" id="btn-refrescar" class="text-slate-500 hover:text-blue-400 transition-all p-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                        </svg>
-                    </button>
-                </div>
-                <span id="status" class="text-[10px] text-blue-400 uppercase tracking-widest animate-pulse">Auto-sync ON</span>
-            </div>
-            
-            <ul id="lista-correos" class="space-y-3 min-h-[150px]">
-                <li class="text-slate-500 italic text-center py-10">Esperando mensajes...</li>
-            </ul>
-        </div>
-    </main>
-
-    <section class="w-full max-w-2xl mt-12 border-t border-slate-700 pt-8 text-slate-400">
-        <h2 class="text-2xl font-bold text-white mb-4">Preguntas Frecuentes</h2>
-        <div class="grid md:grid-cols-2 gap-6 text-sm">
-            <div>
-                <h3 class="text-blue-400 font-semibold mb-2 underline">¿Es compatible con cualquier web?</h3>
-                <p>Sí, puedes usarlo en Facebook, Instagram o cualquier servicio que pida verificación. Si un sitio bloquea el dominio, genera uno "Nuevo".</p>
-            </div>
-            <div>
-                <h3 class="text-blue-400 font-semibold mb-2 underline">¿Cuánto dura el correo?</h3>
-                <p>Tu sesión dura 1 hora. Si refrescas la página, el correo se mantiene hasta que el tiempo se agote o pidas uno nuevo.</p>
-            </div>
-        </div>
-    </section>
-
-    <div class="mt-8">
-        <script type="text/javascript">
-            atOptions = {'key' : '6d9af02576f94411330a8796b5f53d8a','format' : 'iframe','height' : 50,'width' : 320,'params' : {}};
-        </script>
-        <script type="text/javascript" src="https://www.highperformanceformat.com/6d9af02576f94411330a8796b5f53d8a/invoke.js"></script>
-    </div>
-
-    <footer class="mt-10 py-6 text-slate-600 text-xs text-center">
-        &copy; 2026 QuickMail - Araure, Venezuela.
-    </footer>
-
-    <script>
-        let token = localStorage.getItem('qm_token') || "";
-        let address = localStorage.getItem('qm_address') || "";
-        let expiry = localStorage.getItem('qm_expiry') || 0;
-        let intervalId = null;
-
-        async function init() {
-            const now = Date.now();
-            if (address && token && now < expiry) {
-                // Restaurar sesión existente
-                document.getElementById('email-display').innerText = address;
-                startPolling();
-                startTimer();
-            } else {
-                // Crear correo nuevo
-                crearNuevoCorreo();
-            }
-        }
-
-        async function crearNuevoCorreo() {
-            const display = document.getElementById('email-display');
-            display.innerHTML = '<span class="loading">Generando...</span>';
-            
-            try {
-                const domainsRes = await fetch('https://api.mail.tm/domains');
-                const domains = await domainsRes.json();
-                const domain = domains['hydra:member'][0].domain;
-
-                const newAddress = `user${Math.floor(Math.random() * 1000000)}@${domain}`;
-                const password = "password123";
-
-                // Registrar
-                await fetch('https://api.mail.tm/accounts', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ address: newAddress, password })
-                });
-
-                // Token
-                const tokenRes = await fetch('https://api.mail.tm/token', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ address: newAddress, password })
-                });
-                const tokenData = await tokenRes.json();
-                
-                // Guardar en LocalStorage (Expiración en 1 hora)
-                token = tokenData.token;
-                address = newAddress;
-                expiry = Date.now() + (60 * 60 * 1000);
-
-                localStorage.setItem('qm_token', token);
-                localStorage.setItem('qm_address', address);
-                localStorage.setItem('qm_expiry', expiry);
-
-                display.innerText = address;
-                startPolling();
-                startTimer();
-
-            } catch (error) {
-                display.innerText = "Error. Reintenta.";
-            }
-        }
-
-        function startPolling() {
-            if (intervalId) clearInterval(intervalId);
-            revisarCorreos();
-            intervalId = setInterval(revisarCorreos, 3000); // Rápido: cada 3 seg
-        }
-
-        async function revisarCorreos() {
-            if (!token) return;
-            try {
-                const res = await fetch('https://api.mail.tm/messages', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const data = await res.json();
-                const lista = document.getElementById('lista-correos');
-                const mensajes = data['hydra:member'];
-
-                if (mensajes.length > 0) {
-                    lista.innerHTML = "";
-                    mensajes.forEach(msg => {
-                        const li = document.createElement('li');
-                        li.className = "bg-[#0f172a] p-4 rounded-xl border border-slate-700 hover:border-blue-500 transition-all cursor-pointer mb-2";
-                        li.innerHTML = `
-                            <div class="text-[10px] text-blue-400 font-bold uppercase">De: ${msg.from.address}</div>
-                            <div class="text-white font-bold">${msg.subject || '(Sin Asunto)'}</div>
-                            <div class="text-xs text-slate-400 mt-1">${msg.intro || ''}</div>
-                        `;
-                        lista.appendChild(li);
-                    });
-                }
-            } catch (e) { console.log("Buscando..."); }
-        }
-
-        function startTimer() {
-            const timerDisplay = document.getElementById('timer');
-            const timerInterval = setInterval(() => {
-                const now = Date.now();
-                const diff = expiry - now;
-
-                if (diff <= 0) {
-                    clearInterval(timerInterval);
-                    generarNuevoManual();
-                } else {
-                    const mins = Math.floor(diff / 60000);
-                    const secs = Math.floor((diff % 60000) / 1000);
-                    timerDisplay.innerText = `Expira en: ${mins}:${secs < 10 ? '0' : ''}${secs}`;
-                }
-            }, 1000);
-        }
-
-        function generarNuevoManual() {
-            localStorage.clear();
-            location.reload();
-        }
-
-        async function refrescarManual() {
-            const btn = document.getElementById('btn-refrescar');
-            btn.classList.add('animate-spin', 'text-blue-400');
-            await revisarCorreos();
-            setTimeout(() => btn.classList.remove('animate-spin', 'text-blue-400'), 1000);
-        }
-
-        function copiarCorreo() {
-            const email = document.getElementById('email-display').innerText;
-            const btn = document.getElementById('btn-copiar');
-            navigator.clipboard.writeText(email).then(() => {
-                const text = btn.innerHTML;
-                btn.innerHTML = "✅ Copiado";
-                setTimeout(() => btn.innerHTML = text, 2000);
-            });
-        }
-
-        window.onload = init;
-    </script>
-</body>
-</html>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.00
