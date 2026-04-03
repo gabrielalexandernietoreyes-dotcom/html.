@@ -1,90 +1,157 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <title>Mi Correo Temporal</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickMail | Tu Correo Temporal Gratis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { font-family: sans-serif; background: #121212; color: white; padding: 20px; }
-        .box { background: #1e1e1e; padding: 20px; border-radius: 8px; margin-bottom: 10px; }
-        button { background: #0070f3; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px; }
-        #email-display { font-weight: bold; color: #00ff88; margin: 10px 0; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .loading { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
     </style>
 </head>
-<body>
+<body class="bg-[#0f172a] text-slate-200 min-h-screen flex flex-col items-center p-4 md:p-10">
 
-    <div class="box">
-        <h2>Tu Correo Temporal</h2>
-        <div id="email-display">Generando...</div>
-        <button onclick="crearNuevoCorreo()">Nuevo Correo</button>
-    </div>
+    <header class="mb-10 text-center">
+        <h1 class="text-4xl font-extrabold text-blue-500 mb-2">⚡ QuickMail</h1>
+        <p class="text-slate-400">Genera correos desechables al instante para evitar el spam.</p>
+    </header>
 
-    <div class="box">
-        <h3>Bandeja de Entrada</h3>
-        <ul id="lista-correos">
-            <li>Esperando mensajes...</li>
-        </ul>
-    </div>
+    <main class="w-full max-w-2xl bg-[#1e293b] rounded-2xl p-6 md:p-8 shadow-2xl border border-slate-700">
+        
+        <div class="flex flex-col gap-4 mb-8">
+            <label class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Tu dirección de correo:</label>
+            <div class="flex flex-col md:flex-row gap-3">
+                <div id="email-display" class="flex-1 bg-[#0f172a] p-4 rounded-xl text-lg font-mono text-green-400 border border-slate-700 break-all flex items-center justify-center min-h-[60px]">
+                    <span class="loading">Generando dirección...</span>
+                </div>
+                
+                <div class="flex gap-2">
+                    <button onclick="copiarCorreo()" id="btn-copiar" class="bg-slate-700 hover:bg-slate-600 text-white px-5 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2">
+                        📋 <span>Copiar</span>
+                    </button>
+                    <button onclick="crearNuevoCorreo()" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2">
+                        🔄 <span>Nuevo</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+                <h2 class="text-xl font-bold text-white">Bandeja de Entrada</h2>
+                <span id="status" class="text-xs text-blue-400 animate-pulse">Revisando mensajes...</span>
+            </div>
+            
+            <ul id="lista-correos" class="space-y-3 min-h-[150px]">
+                <li class="text-slate-500 italic text-center py-10">No hay mensajes todavía. Los correos aparecerán aquí automáticamente.</li>
+            </ul>
+        </div>
+    </main>
+
+    <footer class="mt-10 text-slate-500 text-sm text-center">
+        &copy; 2026 QuickMail - Privacidad instantánea sin registros.
+    </footer>
 
     <script>
         let token = "";
-        let accountId = "";
+        let intervalId = null;
 
         async function crearNuevoCorreo() {
-            // 1. Obtener un dominio disponible
-            const domainsRes = await fetch('https://api.mail.tm/domains');
-            const domains = await domainsRes.json();
-            const domain = domains['hydra:member'][0].domain;
+            const display = document.getElementById('email-display');
+            const lista = document.getElementById('lista-correos');
+            display.innerHTML = '<span class="loading">Generando...</span>';
+            lista.innerHTML = '<li class="text-slate-500 italic text-center py-10">Esperando mensajes...</li>';
 
-            // 2. Crear una cuenta aleatoria
-            const address = `user${Math.floor(Math.random() * 100000)}@${domain}`;
-            const password = "password123";
+            try {
+                // 1. Obtener dominio
+                const domainsRes = await fetch('https://api.mail.tm/domains');
+                const domains = await domainsRes.json();
+                const domain = domains['hydra:member'][0].domain;
 
-            const createRes = await fetch('https://api.mail.tm/accounts', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ address, password })
-            });
-            const account = await createRes.json();
-            accountId = account.id;
+                // 2. Crear cuenta aleatoria
+                const address = `user${Math.floor(Math.random() * 1000000)}@${domain}`;
+                const password = "password123";
 
-            // 3. Obtener el Token de acceso
-            const tokenRes = await fetch('https://api.mail.tm/token', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ address, password })
-            });
-            const tokenData = await tokenRes.json();
-            token = tokenData.token;
+                await fetch('https://api.mail.tm/accounts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ address, password })
+                });
 
-            document.getElementById('email-display').innerText = address;
-            console.log("Cuenta creada y Token obtenido");
-            
-            // Empezar a revisar correos cada 10 segundos
-            setInterval(revisarCorreos, 10000);
+                // 3. Obtener Token
+                const tokenRes = await fetch('https://api.mail.tm/token', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ address, password })
+                });
+                const tokenData = await tokenRes.json();
+                token = tokenData.token;
+
+                display.innerText = address;
+
+                // Reiniciar el intervalo de revisión
+                if (intervalId) clearInterval(intervalId);
+                revisarCorreos();
+                intervalId = setInterval(revisarCorreos, 5000); // Revisa cada 5 segundos
+
+            } catch (error) {
+                display.innerText = "Error al conectar. Reintenta.";
+                console.error(error);
+            }
         }
 
         async function revisarCorreos() {
             if (!token) return;
 
-            const res = await fetch('https://api.mail.tm/messages', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            const data = await res.json();
-            const lista = document.getElementById('lista-correos');
-            lista.innerHTML = "";
-
-            if (data['hydra:member'].length === 0) {
-                lista.innerHTML = "<li>No hay mensajes aún.</li>";
-            } else {
-                data['hydra:member'].forEach(msg => {
-                    const li = document.createElement('li');
-                    li.innerText = `${msg.from.address}: ${msg.subject}`;
-                    lista.appendChild(li);
+            try {
+                const res = await fetch('https://api.mail.tm/messages', {
+                    headers: { 'Authorization': `Bearer ${token}` }
                 });
+                const data = await res.json();
+                const lista = document.getElementById('lista-correos');
+                const mensajes = data['hydra:member'];
+
+                if (mensajes.length > 0) {
+                    lista.innerHTML = "";
+                    mensajes.forEach(msg => {
+                        const li = document.createElement('li');
+                        li.className = "bg-[#0f172a] p-4 rounded-xl border border-slate-700 hover:border-blue-500 transition-colors cursor-pointer";
+                        li.innerHTML = `
+                            <div class="text-xs text-blue-400 mb-1">De: ${msg.from.address}</div>
+                            <div class="font-bold text-white">${msg.subject || '(Sin asunto)'}</div>
+                            <div class="text-sm text-slate-400 mt-1">${msg.intro || ''}</div>
+                        `;
+                        lista.appendChild(li);
+                    });
+                }
+            } catch (error) {
+                console.log("Error revisando correos");
             }
         }
 
-        // Ejecutar al cargar
-        crearNuevoCorreo();
+        function copiarCorreo() {
+            const email = document.getElementById('email-display').innerText;
+            const btn = document.getElementById('btn-copiar');
+            
+            if (email.includes("Generando")) return;
+
+            navigator.clipboard.writeText(email).then(() => {
+                const originalText = btn.innerHTML;
+                btn.innerHTML = "✅ <span>¡Copiado!</span>";
+                btn.classList.replace('bg-slate-700', 'bg-green-600');
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.classList.replace('bg-green-600', 'bg-slate-700');
+                }, 2000);
+            });
+        }
+
+        // Iniciar al cargar la página
+        window.onload = crearNuevoCorreo;
     </script>
 </body>
 </html>
