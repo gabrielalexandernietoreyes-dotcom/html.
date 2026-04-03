@@ -52,6 +52,17 @@
         <div class="space-y-4">
             <div class="flex justify-between items-center border-b border-slate-700 pb-3">
                 <h2 class="text-xl font-bold text-white">Bandeja de Entrada</h2>
+                 <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+    <div class="flex items-center gap-2">
+        <h2 class="text-xl font-bold text-white">Bandeja de Entrada</h2>
+        <button onclick="refrescarManual()" id="btn-refrescar" class="text-slate-500 hover:text-blue-400 transition-all p-1" title="Actualizar ahora">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+        </button>
+    </div>
+    <span id="status" class="text-[10px] text-slate-500 uppercase tracking-widest">Auto-sync ON</span>
+</div>
                 <span id="status" class="text-xs text-blue-400 animate-pulse">Revisando mensajes...</span>
             </div>
             
@@ -79,7 +90,24 @@
         &copy; 2026 QuickMail - Privacidad instantánea sin registros.
     </footer>
 
-    <script>
+    <script> 
+         async function refrescarManual() {
+    const btn = document.getElementById('btn-refrescar');
+    const status = document.getElementById('status');
+
+    // Efecto visual de rotación
+    btn.classList.add('animate-spin', 'text-blue-400');
+    status.innerText = "Actualizando...";
+
+    // Llamamos a la función que ya tenemos
+    await revisarCorreos();
+
+    // Quitamos el efecto después de 1 segundo
+    setTimeout(() => {
+        btn.classList.remove('animate-spin', 'text-blue-400');
+        status.innerText = "Auto-sync ON";
+    }, 1000);
+}
         let token = "";
         let intervalId = null;
 
