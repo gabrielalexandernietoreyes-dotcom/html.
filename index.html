@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Mi Correo Temporal</title>
+    <style>
+        body { font-family: sans-serif; background: #121212; color: white; padding: 20px; }
+        .box { background: #1e1e1e; padding: 20px; border-radius: 8px; margin-bottom: 10px; }
+        button { background: #0070f3; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px; }
+        #email-display { font-weight: bold; color: #00ff88; margin: 10px 0; }
+    </style>
+</head>
+<body>
+
+    <div class="box">
+        <h2>Tu Correo Temporal</h2>
+        <div id="email-display">Generando...</div>
+        <button onclick="crearNuevoCorreo()">Nuevo Correo</button>
+    </div>
+
+    <div class="box">
+        <h3>Bandeja de Entrada</h3>
+        <ul id="lista-correos">
+            <li>Esperando mensajes...</li>
+        </ul>
+    </div>
+
+    <script>
+        let token = "";
+        let accountId = "";
+
+        async function crearNuevoCorreo() {
+            // 1. Obtener un dominio disponible
+            const domainsRes = await fetch('https://api.mail.tm/domains');
+            const domains = await domainsRes.json();
+            const domain = domains['hydra:member'][0].domain;
+
+            // 2. Crear una cuenta aleatoria
+            const address = `user${Math.floor(Math.random() * 100000)}@${domain}`;
+            const password = "password123";
+
+            const createRes = await fetch('https://api.mail.tm/accounts', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ address, password })
+            });
+            const account = await createRes.json();
+            accountId = account.id;
+
+            // 3. Obtener el Token de acceso
+            const tokenRes = await fetch('https://api.mail.tm/token', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ address, password })
+            });
+            const tokenData = await tokenRes.json();
+            token = tokenData.token;
+
+            document.getElementById('email-display').innerText = address;
+            console.log("Cuenta creada y Token obtenido");
+            
+            // Empezar a revisar correos cada 10 segundos
+            setInterval(revisarCorreos, 10000);
+        }
+
+        async function revisarCorreos() {
+            if (!token) return;
+
+            const res = await fetch('https://api.mail.tm/messages', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await res.json();
+            const lista = document.getElementById('lista-correos');
+            lista.innerHTML = "";
+
+            if (data['hydra:member'].length === 0) {
+                lista.innerHTML = "<li>No hay mensajes aún.</li>";
+            } else {
+                data['hydra:member'].forEach(msg => {
+                    const li = document.createElement('li');
+                    li.innerText = `${msg.from.address}: ${msg.subject}`;
+                    lista.appendChild(li);
+                });
+            }
+        }
+
+        // Ejecutar al cargar
+        crearNuevoCorreo();
+    </script>
+</body>
+</html>
